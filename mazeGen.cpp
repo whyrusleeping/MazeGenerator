@@ -6,12 +6,14 @@
 #define PVAL 3
 #endif
 
-bool **getMaze(int size)
+vector<vector<short> > getMaze(int size)
 {
-	bool **m = new bool*[size];
+	vector<vector<short> > m;
+
+	m.resize(size);
 	for(int i = 0; i < size; i++)
-		m[i] = new bool[size];
-	
+		m[i].resize(size);
+
 	int tries = 0;
 	
 
@@ -22,25 +24,22 @@ bool **getMaze(int size)
 
 		if(!((x == 0 && y == 0) || (x == size - 1 && y == size - 1) || (m[x][y])))
 		{
-			m[x][y] = true;
+			m[x][y] = 1;
 			
 			//if(threeSideCheck(m,size,x,y))
 			if(!deadSpaceCheck(m,size,x,y) || threeSideCheck(m,size,x,y))
 			{
-				m[x][y] = false;
+				m[x][y] = 0;
 				tries++;
 				continue;
 			}
-			bool **cm = copyMaze(m,size);
+			vector<vector<short> > cm(m);
 			if(!isPassable(cm, size,0,0))
 			{
-				m[x][y] = false;
+				m[x][y] = 0;
 				tries+=5;
 			}
-			
-			for(int r = 0; r < size; r++)
-				delete cm[r];
-			delete cm;
+		
 		}
 	
 
@@ -49,43 +48,39 @@ bool **getMaze(int size)
 }
 
 //returns false if placing a square in x,y creates dead space
-bool deadSpaceCheck(bool **maze, int size, int x, int y)
+bool deadSpaceCheck(vector<vector<short> > maze, int size, int x, int y)
 {
 	if(x > 0 && !maze[x-1][y])
 	{
-		bool **m = copyMaze(maze, size);
+		vector<vector<short> > m(maze);
 		if(!isPassable(m, size, x-1, y))
 			return false;
-		deleteMaze(m,size);
 	}
 	if(x < size -1 && !maze[x+1][y])
 	{
-		bool **m = copyMaze(maze, size);
+		vector<vector<short> > m(maze);
 		if(!isPassable(m, size, x+1, y))
 			return false;
-		deleteMaze(m,size);
 	}
 
 	if(y > 0 && !maze[x][y-1])
 	{
-		bool **m = copyMaze(maze, size);
+		vector<vector<short> > m(maze);
 		if(!isPassable(m, size, x, y-1))
 			return false;
-		deleteMaze(m,size);
 	}
 
 	if(y < size -1 && !maze[x][y+1])
 	{
-		bool **m = copyMaze(maze, size);
+		vector<vector<short> > m(maze);
 		if(!isPassable(m, size, x, y+1))
 			return false;
-		deleteMaze(m,size);
 	}
 
 	return true;
 }
 
-bool threeSideCheck(bool **maze, int size, int x, int y)
+bool threeSideCheck(vector<vector<short> > maze, int size, int x, int y)
 {
 	bool ret = _nSideCheck(maze,size,x,y,2);
 
@@ -103,7 +98,7 @@ bool threeSideCheck(bool **maze, int size, int x, int y)
 	return ret;
 }
 
-bool _nSideCheck(bool **maze, int size, int x, int y, int n)
+bool _nSideCheck(vector<vector<short> > maze, int size, int x, int y, int n)
 {
 	int c = 0;
 	if(x > 0)
@@ -150,26 +145,19 @@ bool _nSideCheck(bool **maze, int size, int x, int y, int n)
 	
 }
 
-bool **copyMaze(bool **maze, int size)
+vector<vector<short> > copyMaze(vector<vector<short> > maze, int size)
 {
-	bool **nm = new bool*[size];
-	for(int i = 0; i < size; i++)
-	{
-		nm[i] = new bool[size];
-		for(int j = 0; j < size; j++)
-			nm[i][j] = maze[i][j];
-	}
-	return nm;
+
 }
 
-bool isPassable(bool **maze, int s, int cx, int cy)
+bool isPassable(vector<vector<short> > &maze, int s, int cx, int cy)
 {
-	if(cx < 0 || cy < 0 || cx >= s || cy >= s || maze[cx][cy] )
+	if(cx < 0 || cy < 0 || cx >= s || cy >= s || maze[cx][cy]== 1 )
 		return false;
 	if(cx == s-1 && cy == s-1)
 		return true;
 
-	maze[cx][cy] = true;
+	maze[cx][cy] = 1;
 	if(isPassable(maze, s, cx + 1, cy))
 	{
 		return true;
@@ -191,14 +179,12 @@ bool isPassable(bool **maze, int s, int cx, int cy)
 	return false;
 }
 
-void deleteMaze(bool **maze, int size)
+void deleteMaze(vector<vector<short> > maze, int size)
 {
-	for(int i = 0; i< size; i++)
-		delete maze[i];
-	delete maze;
+
 }
 
-void printMaze(bool **maze, int size)
+void printMaze(vector<vector<short> > maze, int size)
 {
 	for(int k = 0; k < size + 2; k++)
 		cout << "X";
