@@ -10,7 +10,7 @@ bool **getMaze(int size)
 	int tries = 0;
 	
 
-	while(tries < 10)
+	while(tries < 40 * size * size)
 	{
 		int x = rand() % size;
 		int y = rand() % size;
@@ -18,12 +18,18 @@ bool **getMaze(int size)
 		if(!((x == 0 && y == 0) || (x == size - 1 && y == size - 1) || (m[x][y])))
 		{
 			m[x][y] = true;
-		
+			
+			if(threeSideCheck(m,size,x,y))
+			{
+				m[x][y] = false;
+				tries++;
+				continue;
+			}
 			bool **cm = copyMaze(m,size);
 			if(!isPassable(cm, size,0,0))
 			{
 				m[x][y] = false;
-				tries++;
+				tries+=5;
 			}
 			
 			for(int r = 0; r < size; r++)
@@ -34,6 +40,71 @@ bool **getMaze(int size)
 
 	}
 	return m;
+}
+
+bool threeSideCheck(bool **maze, int size, int x, int y)
+{
+	bool ret = _nSideCheck(maze,size,x,y,2);
+
+	if(!ret && x > 0)
+		ret |= _nSideCheck(maze,size,x-1,y,3);
+
+	if(!ret && x < size-1)
+		ret |= _nSideCheck(maze,size,x+1,y,3);
+
+	if(!ret && y>0)
+		ret |= _nSideCheck(maze,size,x,y-1,3);
+	
+	if(!ret && y < size-1)
+		ret |= _nSideCheck(maze,size,x,y+1,3);
+	return ret;
+}
+
+bool _nSideCheck(bool **maze, int size, int x, int y, int n)
+{
+	int c = 0;
+	if(x > 0)
+	{
+		if(maze[x-1][y])
+			c++;
+	}
+	else
+	{
+		c++;
+	}
+
+	if(x < size - 1)
+	{
+		if(maze[x+1][y])
+			c++;
+	}
+	else
+	{
+		c++;
+	}
+
+	if(y > 0)
+	{
+		if(maze[x][y-1])
+			c++;
+	}
+	else
+	{
+		c++;
+	}
+
+	if(y < size - 1)
+	{
+		if(maze[x][y+1])
+			c++;
+	}
+	else
+	{
+		c++;
+	}
+
+	return c > n;
+	
 }
 
 bool **copyMaze(bool **maze, int size)
