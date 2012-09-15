@@ -1,5 +1,10 @@
 #include "mazeGen.h"
 
+#ifdef PRETTY
+#define PVAL 2
+#else
+#define PVAL 3
+#endif
 
 bool **getMaze(int size)
 {
@@ -47,16 +52,16 @@ bool threeSideCheck(bool **maze, int size, int x, int y)
 	bool ret = _nSideCheck(maze,size,x,y,2);
 
 	if(!ret && x > 0)
-		ret |= _nSideCheck(maze,size,x-1,y,3);
+		ret |= _nSideCheck(maze,size,x-1,y,PVAL);
 
 	if(!ret && x < size-1)
-		ret |= _nSideCheck(maze,size,x+1,y,3);
+		ret |= _nSideCheck(maze,size,x+1,y,PVAL);
 
 	if(!ret && y>0)
-		ret |= _nSideCheck(maze,size,x,y-1,3);
+		ret |= _nSideCheck(maze,size,x,y-1,PVAL);
 	
 	if(!ret && y < size-1)
-		ret |= _nSideCheck(maze,size,x,y+1,3);
+		ret |= _nSideCheck(maze,size,x,y+1,PVAL);
 	return ret;
 }
 
