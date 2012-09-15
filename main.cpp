@@ -1,5 +1,5 @@
 #include "mazeGen.h"
-
+#define PRETTY
 using std::cin;
 
 int main()

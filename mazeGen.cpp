@@ -15,7 +15,7 @@ bool **getMaze(int size)
 	int tries = 0;
 	
 
-	while(tries < 40 * size * size)
+	while(tries < 60 * size * size)
 	{
 		int x = rand() % size;
 		int y = rand() % size;
@@ -24,7 +24,8 @@ bool **getMaze(int size)
 		{
 			m[x][y] = true;
 			
-			if(threeSideCheck(m,size,x,y))
+			//if(threeSideCheck(m,size,x,y))
+			if(!deadSpaceCheck(m,size,x,y) || threeSideCheck(m,size,x,y))
 			{
 				m[x][y] = false;
 				tries++;
@@ -45,6 +46,43 @@ bool **getMaze(int size)
 
 	}
 	return m;
+}
+
+//returns false if placing a square in x,y creates dead space
+bool deadSpaceCheck(bool **maze, int size, int x, int y)
+{
+	if(x > 0 && !maze[x-1][y])
+	{
+		bool **m = copyMaze(maze, size);
+		if(!isPassable(m, size, x-1, y))
+			return false;
+		deleteMaze(m,size);
+	}
+	if(x < size -1 && !maze[x+1][y])
+	{
+		bool **m = copyMaze(maze, size);
+		if(!isPassable(m, size, x+1, y))
+			return false;
+		deleteMaze(m,size);
+	}
+
+	if(y > 0 && !maze[x][y-1])
+	{
+		bool **m = copyMaze(maze, size);
+		if(!isPassable(m, size, x, y-1))
+			return false;
+		deleteMaze(m,size);
+	}
+
+	if(y < size -1 && !maze[x][y+1])
+	{
+		bool **m = copyMaze(maze, size);
+		if(!isPassable(m, size, x, y+1))
+			return false;
+		deleteMaze(m,size);
+	}
+
+	return true;
 }
 
 bool threeSideCheck(bool **maze, int size, int x, int y)
@@ -162,7 +200,19 @@ void deleteMaze(bool **maze, int size)
 
 void printMaze(bool **maze, int size)
 {
+	for(int k = 0; k < size + 2; k++)
+		cout << "X";
+	cout << "\n";
+
 	for(int i = 0; i < size; i++)
+	{
+		cout << "X";
 		for(int j = 0; j < size; j++)
-			cout << ((maze[i][j]) ? "X":" ") << (j == size-1 ? "\n" : "");
+			cout << ((maze[i][j]) ? "X":" ");
+		cout << "X\n";
+	}
+	for(int k = 0; k < size + 2; k++)
+		cout << "X";
+	cout << "\n";
 }
+

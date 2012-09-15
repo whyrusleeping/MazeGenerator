@@ -11,3 +11,4 @@ bool **copyMaze(bool **maze, int size);
 void deleteMaze(bool **maze, int size);
 bool _nSideCheck(bool **maze, int size, int x, int y, int n);
 bool threeSideCheck(bool **maze, int size, int x, int y);
+bool deadSpaceCheck(bool **maze, int size, int x, int y);
